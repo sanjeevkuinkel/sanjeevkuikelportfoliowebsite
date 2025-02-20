@@ -32,7 +32,7 @@ It’s fully responsive, built using modern web technologies, and designed with 
 Clone this repository to your local machine and start customizing!
 
 ```bash
-git clone https://github.com/sanjeevkuinkel/portfolio.git
+git clone https://github.com/sanjeevkuinkel/sanjeevkuikelportfoliowebsite.git
 cd portfolio
 npm install
 npm start
