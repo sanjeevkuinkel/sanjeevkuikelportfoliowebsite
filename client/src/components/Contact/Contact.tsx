@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios"; // Import AxiosError for type checking
+import axios, { AxiosError } from "axios";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -7,8 +7,8 @@ const Contact = () => {
     email: "",
     message: "",
   });
-  const [status, setStatus] = useState(""); // Status for success/error message
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [status, setStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -20,52 +20,48 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isLoading) return; // Prevent multiple submissions
+    if (isLoading) return;
 
-    setIsLoading(true); // Set loading state to true
-    setStatus(""); // Clear previous status
+    setIsLoading(true);
+    setStatus("");
 
     try {
-      console.log("Sending form data:", formData); // Log form data for debugging
+      console.log("Sending form data:", formData);
 
       const response = await axios.post(
-        "http://localhost:5000/send-message",
+        `${process.env.REACT_APP_API_BASE_URL}/send-message`,
         formData,
         {
           headers: {
-            "Content-Type": "application/json", // Ensure JSON content type
+            "Content-Type": "application/json",
           },
         }
       );
 
-      console.log("Response from backend:", response.data); // Log response for debugging
+      console.log("Response from backend:", response.data);
 
       if (response.data.success) {
         setStatus("Your message has been sent successfully!");
-        setFormData({ name: "", email: "", message: "" }); // Clear form fields
+        setFormData({ name: "", email: "", message: "" });
       } else {
         setStatus("Failed to send the message. Please try again.");
       }
     } catch (error) {
       console.error("Error sending message:", error);
 
-      // Type-check the error object
       if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
         setStatus(
           `Error: ${
             error.response?.data?.message || "Failed to send the message."
           }`
         );
       } else if (error instanceof Error) {
-        // Handle generic errors
         setStatus(`Error: ${error.message}`);
       } else {
-        // Handle unknown errors
         setStatus("An unexpected error occurred. Please try again.");
       }
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false);
     }
   };
 
@@ -126,11 +122,10 @@ const Contact = () => {
         <button
           type="submit"
           className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
-          disabled={isLoading} // Disable button while loading
+          disabled={isLoading}
         >
           {isLoading ? "Sending..." : "Send Message"}
         </button>
-        {/* Display Status Message */}
         {status && (
           <div
             className={`mt-4 text-center text-lg ${
