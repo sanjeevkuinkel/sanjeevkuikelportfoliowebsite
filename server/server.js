@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 
 const app = express();
 const port = 5000;
-
+app.use(express.static(path.join(__dirname, "../client/build")));
 // Middleware
 app.use(
   cors({
@@ -64,7 +64,9 @@ app.post("/send-message", (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
-
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+});
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
