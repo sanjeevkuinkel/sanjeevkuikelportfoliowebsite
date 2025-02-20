@@ -9,13 +9,10 @@ const app = express();
 const port = process.env.PORT || 5000; // Use dynamic port for deployment
 
 // Middleware for CORS
-app.use(
-  cors({
-    origin: "https://sanjeevkuikelportfoliowebsite.onrender.com",
-    methods: ["GET", "POST"],
-    credentials: true,
-  })
-);
+const allowedOrigins = [
+  process.env.CORS_ORIGIN || "http://localhost:3000", // Allow requests from your React app
+  "http://localhost:3000", // Allow local development
+];
 
 app.use(
   cors({
