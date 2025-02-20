@@ -3,23 +3,37 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const path = require("path"); // Import the path module
+const path = require("path");
 
 const app = express();
 const port = process.env.PORT || 5000; // Use dynamic port for deployment
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, "../client/build")));
+// Middleware for CORS
+const allowedOrigins = [
+  process.env.CORS_ORIGIN || "http://localhost:3000", // Allow requests from your React app
+  "http://localhost:3000", // Allow local development
+];
 
-// Middleware
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:3000", // Allow requests from your React app
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST"], // Allow specific HTTP methods
     credentials: true, // Allow cookies and credentials
   })
 );
-app.use(bodyParser.json()); // Parse JSON bodies
+
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../client/build")));
 
 // Create Nodemailer transporter (using Gmail as an example)
 const transporter = nodemailer.createTransport({
@@ -31,7 +45,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Define the POST route to handle form submission
-app.post("/send-message", (req, res) => {
+app.post("/send-message", async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
@@ -49,25 +63,19 @@ app.post("/send-message", (req, res) => {
       text: `Message: ${message}\n\nFrom: ${name}\nEmail: ${email}`,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending email:", error.message);
-        return res.status(500).json({
-          success: false,
-          message: "Error sending email",
-          error: error.message,
-        });
-      }
-      console.log("Email sent:", info.response);
-      return res
-        .status(200)
-        .json({ success: true, message: "Email sent successfully!", info });
-    });
-  } catch (error) {
-    console.error("Unexpected error:", error);
+    // Send email using Nodemailer
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully!");
     return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
+      .status(200)
+      .json({ success: true, message: "Email sent successfully!" });
+  } catch (error) {
+    console.error("Error sending email:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error sending email",
+      error: error.message,
+    });
   }
 });
 
