@@ -29,11 +29,11 @@ const Contact = () => {
       console.log("Sending form data:", formData); // Log form data for debugging
 
       const response = await axios.post(
-        "http://localhost:5000/send-message",
+        "https://sanjeevkuikelportfoliowebsite.onrender.com/send-message",
         formData,
         {
           headers: {
-            "Content-Type": "application/json", // Ensure JSON content type
+            "Content-Type": "application/json",
           },
         }
       );

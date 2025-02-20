@@ -10,8 +10,8 @@ const port = process.env.PORT || 5000; // Use dynamic port for deployment
 
 // Middleware for CORS
 const allowedOrigins = [
-  process.env.CORS_ORIGIN || "http://localhost:3000", // Allow requests from your React app
-  "http://localhost:3000", // Allow local development
+  process.env.CORS_ORIGIN || "http://localhost:3000",
+  "https://sanjeevkuikelportfoliowebsite.onrender.com", // Add your deployed React app URL here
 ];
 
 app.use(
