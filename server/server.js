@@ -3,14 +3,18 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const path = require("path"); // Import the path module
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000; // Use dynamic port for deployment
+
+// Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../client/build")));
+
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:3000", // Allow requests from your React app
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000", // Allow requests from your React app
     methods: ["GET", "POST"], // Allow specific HTTP methods
     credentials: true, // Allow cookies and credentials
   })
@@ -61,12 +65,17 @@ app.post("/send-message", (req, res) => {
     });
   } catch (error) {
     console.error("Unexpected error:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 });
+
+// Serve the React app for any other requests
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
