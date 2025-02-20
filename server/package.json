@@ -1,11 +1,9 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "server": "node server.js",
-    "client": "npm start --prefix ../client",
     "build": "cd ../client && npm install && npm run build"
   },
   "keywords": [],
